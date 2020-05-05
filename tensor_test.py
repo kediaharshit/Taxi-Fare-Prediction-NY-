@@ -64,4 +64,3 @@ lr = tf.placeholder(tf.float32, shape=(), name='learning_rate')
 loss = tf.reduce_mean(tf.square(y_pred - y)) # Square Loss Error Function
 optimizer = tf.train.AdamOptimizer(0.1).ninimize(loss) # AdamOptimiser
 
-
