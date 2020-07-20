@@ -17,12 +17,12 @@ import tensorflow.losses as loss_utils
 from sklearn.preprocessing import LabelEncoder
 
 def init_weights(shape):
-    return tf.Variable(tf.truncated_normal(shape, 0.05, 0.05))
+    return tf.Variable(tf.truncated_normal(shape, 0.01, 0.01))
 
 def init_biases(shape):
     return tf.Variable(tf.zeros(shape))
 
-def fully_connected_layer(inputs, input_shape, output_shape, activation=tf.nn.sigmoid):
+def fully_connected_layer(inputs, input_shape, output_shape, activation=tf.nn.relu):
 
     weights = init_weights([input_shape, output_shape])
     biases = init_biases([output_shape])
@@ -35,7 +35,7 @@ def fully_connected_layer(inputs, input_shape, output_shape, activation=tf.nn.si
     return layer
 
 # nrows is number of entries to be read
-data_set = pd.read_csv('train.csv', sep = ',', nrows = 100000);
+data_set = pd.read_csv('../a4_dataset/train.csv', sep = ',', nrows = 100000);
 #data_set.pickup_datetime = pd.DatetimeIndex(data_set.pickup_datetime).asi8 // 10**9
 
 data_set.fillna(method='bfill',inplace=True)
@@ -78,10 +78,10 @@ targets =  tf.placeholder(tf.float32, [None, 1], name='Targets')
 
 
 #defining the network
-l1 = fully_connected_layer(inputs, 9, 30)
-l2 = fully_connected_layer(l1, 30, 30)
-l3 = fully_connected_layer(l2, 30, 30)
-l4 = fully_connected_layer(l3, 30, 1, activation=None)
+l1 = fully_connected_layer(inputs, 9, 10)
+#l2 = fully_connected_layer(l1, 30, 30)
+#l3 = fully_connected_layer(l2, 30, 30)
+l4 = fully_connected_layer(l1, 10, 1, activation=None)
 
 predictions = l4
 
@@ -89,8 +89,8 @@ cost = loss2 = tf.reduce_mean(tf.squared_difference(targets, predictions))
 learning_rate = 0.001
 optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cost)
 
-epochs = 10000
-batch_size = 5000
+epochs = 1000
+batch_size = 1000
 from tqdm import tqdm
 
 #Starting session for the graph
@@ -105,7 +105,7 @@ with tf.Session() as sess:
         
         batch_loss, opt = sess.run([cost, optimizer], feed_dict={inputs:x_batch, targets:y_batch})
         
-        if i % 1000 == 0:
+        if i % 100 == 0:
             print("error: " , batch_loss)
     
     #TESTING PORTION OF THE SESSION
